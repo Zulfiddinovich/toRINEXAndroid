@@ -1,11 +1,21 @@
 package com.gnssapps.acq.torinex;
 
+import static com.gnssapps.acq.torinex.AppUtils.fillFromDir;
+import static com.gnssapps.acq.torinex.AppUtils.showInfoHelp;
+import static com.gnssapps.acq.torinex.Constants.APP_NAME;
+import static com.gnssapps.acq.torinex.Constants.RET_ERR_CRENAV;
+import static com.gnssapps.acq.torinex.Constants.RET_ERR_OPENRAW;
+import static com.gnssapps.acq.torinex.Constants.RET_ERR_READRAW;
+import static com.gnssapps.acq.torinex.Constants.RET_ERR_WRINAV;
+import static com.gnssapps.acq.torinex.Constants.RET_ERR_WRIOBS;
+import static com.gnssapps.acq.torinex.Constants.RINEX_FILES_DIRECTORY;
+import static com.gnssapps.acq.torinex.Constants.SEMICOLON;
+
+import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.text.method.ScrollingMovementMethod;
 import android.util.SparseBooleanArray;
 import android.view.Menu;
@@ -19,17 +29,14 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+
 import java.io.File;
-import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-
-import static com.gnssapps.acq.torinex.AppUtils.showInfoHelp;
-import static com.gnssapps.acq.torinex.AppUtils.fillFromDir;
-import static com.gnssapps.acq.torinex.Constants.*;
 
 /**
  * GenerateRinex activity allows user to select the survey files where GNSS data have been stored
@@ -163,18 +170,16 @@ public class GenerateRinex extends AppCompatActivity {
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_setting_info:
-                showInfoHelp(
-                        getString(R.string.generate_RINEX_info_title),
-                        getString(R.string.generate_RINEX_info_body),
-                        this);
-                return true;
-            case android.R.id.home:
-                //return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
+        int itemId = item.getItemId();
+        if (itemId == R.id.action_setting_info) {
+            showInfoHelp(
+                    getString(R.string.generate_RINEX_info_title),
+                    getString(R.string.generate_RINEX_info_body),
+                    this);
+            return true;
+        }//return true;
+
+        return super.onOptionsItemSelected(item);
     }
 
     //Private methods

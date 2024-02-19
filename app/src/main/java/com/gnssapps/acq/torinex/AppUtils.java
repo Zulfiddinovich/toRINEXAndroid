@@ -1,11 +1,10 @@
 package com.gnssapps.acq.torinex;
 
 import android.content.Context;
-import android.location.GnssNavigationMessage;
 import android.os.Environment;
-import android.support.v7.app.AlertDialog;
 import android.text.Html;
-import android.text.Spanned;
+
+import androidx.appcompat.app.AlertDialog;
 
 import java.io.File;
 import java.io.FilenameFilter;

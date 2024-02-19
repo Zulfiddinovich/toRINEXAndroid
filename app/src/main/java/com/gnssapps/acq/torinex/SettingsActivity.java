@@ -1,47 +1,33 @@
 package com.gnssapps.acq.torinex;
 
-import android.annotation.TargetApi;
-import android.content.Context;
+import static com.gnssapps.acq.torinex.AppUtils.showInfoHelp;
+import static com.gnssapps.acq.torinex.Constants.ACQ_REQUEST_ID;
+
+import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.content.res.Configuration;
-import android.location.GnssNavigationMessage;
-import android.media.Ringtone;
-import android.media.RingtoneManager;
-import android.net.Uri;
 import android.os.Build;
-import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.MultiSelectListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
-import android.preference.SwitchPreference;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.NavUtils;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AlertDialog;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.RingtonePreference;
-import android.text.Html;
-import android.text.Spanned;
-import android.text.TextUtils;
+import android.preference.SwitchPreference;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import java.util.ArrayList;
+import androidx.appcompat.app.ActionBar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
 import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
-
-import static com.gnssapps.acq.torinex.Constants.ACQ_REQUEST_ID;
-import static com.gnssapps.acq.torinex.Constants.REQUIRED_PERMISSIONS;
-import static com.gnssapps.acq.torinex.AppUtils.showInfoHelp;
 
 /**
  * SettingsActivity, the main activity for this app, is a {@link PreferenceActivity} that
@@ -55,7 +41,8 @@ import static com.gnssapps.acq.torinex.AppUtils.showInfoHelp;
  * API Guide</a> for more information on developing a Settings UI.
  */
 public class SettingsActivity extends AppCompatPreferenceActivity {
-    private boolean appHasPermissions = false;
+    private boolean appHasLocationPermissions = true;
+    private boolean appHasStoragePermissions = true;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,28 +52,33 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             // Show the Up button in the action bar.
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
-        //state
-        //check if OS version has the API level required
-        if (Build.VERSION.SDK_INT < VERSION_CODES.N_MR1) {
-            Toast.makeText(getApplicationContext(),getString(R.string.app_reqAPIlevel), Toast.LENGTH_LONG).show();
-            this.finishAffinity();
-        }
         //check and request permissions if needed
-        appHasPermissions = true;
-        for (String p : REQUIRED_PERMISSIONS)
-            if (ContextCompat.checkSelfPermission(this, p) != PackageManager.PERMISSION_GRANTED) appHasPermissions = false;
-        if (!appHasPermissions) {
-            ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, ACQ_REQUEST_ID);
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) appHasLocationPermissions = false;
+
+        if (Build.VERSION.SDK_INT > 32) appHasStoragePermissions = true;
+        else if( ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) appHasStoragePermissions = false;
+
+
+
+
+
+
+
+//        for (String p : REQUIRED_PERMISSIONS){
+//            if (ContextCompat.checkSelfPermission(this, p) != PackageManager.PERMISSION_GRANTED) appHasPermissions = false;
+//        }
+        if (!appHasLocationPermissions || !appHasStoragePermissions) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.WRITE_EXTERNAL_STORAGE}, ACQ_REQUEST_ID);
         }
     }
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         if (requestCode == ACQ_REQUEST_ID) {
             // If request is cancelled, the result arrays are empty.
-            appHasPermissions = true;
+            appHasLocationPermissions = true;
             for (int i=0; i<grantResults.length; i++)
-                if (grantResults[i] != PackageManager.PERMISSION_GRANTED) appHasPermissions = false;
-            if (!appHasPermissions) {
+                if (grantResults[i] != PackageManager.PERMISSION_GRANTED) appHasLocationPermissions = false;
+            if (!appHasLocationPermissions) {
                 Toast.makeText(getApplicationContext(), getString(R.string.app_perm_NOK), Toast.LENGTH_LONG).show();
                 this.finishAffinity();
             }
@@ -106,35 +98,33 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_setting_info:
-                String currentTitle = getTitle().toString();
-                if (currentTitle.equalsIgnoreCase(getString(R.string.app_name))) {
-                    showInfoHelp(
-                            getString(R.string.setting_activity_info_title),
-                            getString(R.string.setting_activity_info_body),
-                            this);
-                } else if (currentTitle.equalsIgnoreCase(getString(R.string.pref_header_setupAcq))) {
-                    showInfoHelp(
-                            getString(R.string.setup_acquisition_info_title),
-                            getString(R.string.setup_acquisition_info_body),
-                            this);
-                } else if (currentTitle.equalsIgnoreCase(getString(R.string.pref_header_setupRINEX))) {
-                    showInfoHelp(
-                            getString(R.string.setup_RINEX_info_title),
-                            getString(R.string.setup_RINEX_info_body),
-                            this);
-                } else {
-                    showInfoHelp("Current", currentTitle, this);
-                }
-                return true;
-            case android.R.id.home:
-                //Toast.makeText(getApplicationContext(), "Home selected", Toast.LENGTH_SHORT).show();
-                //finish();
-                //return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
+        int itemId = item.getItemId();
+        if (itemId == R.id.action_setting_info) {
+            String currentTitle = getTitle().toString();
+            if (currentTitle.equalsIgnoreCase(getString(R.string.app_name))) {
+                showInfoHelp(
+                        getString(R.string.setting_activity_info_title),
+                        getString(R.string.setting_activity_info_body),
+                        this);
+            } else if (currentTitle.equalsIgnoreCase(getString(R.string.pref_header_setupAcq))) {
+                showInfoHelp(
+                        getString(R.string.setup_acquisition_info_title),
+                        getString(R.string.setup_acquisition_info_body),
+                        this);
+            } else if (currentTitle.equalsIgnoreCase(getString(R.string.pref_header_setupRINEX))) {
+                showInfoHelp(
+                        getString(R.string.setup_RINEX_info_title),
+                        getString(R.string.setup_RINEX_info_body),
+                        this);
+            } else {
+                showInfoHelp("Current", currentTitle, this);
+            }
+            return true;
+        }//Toast.makeText(getApplicationContext(), "Home selected", Toast.LENGTH_SHORT).show();
+        //finish();
+        //return true;
+
+        return super.onOptionsItemSelected(item);
     }
     /*TBD
     @Override

@@ -15,10 +15,6 @@ public class Constants {
     public static final String NRD_FILE_EXTENSION = ".NRD"; //GNSS Navigation Raw Data file extension
     //to manage the permissions needed in the app
     public static final int ACQ_REQUEST_ID = 1;
-    public static final String[] REQUIRED_PERMISSIONS = {
-            Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE
-    };
     //to manage acquisition of GNSS data
     public static final long NUMBER_NANOSECONDS_DAY = 24L * 60L * 60L * 1000000000L;
     public static final long NUMBER_NANOSECONDS_WEEK = 7L * NUMBER_NANOSECONDS_DAY;

@@ -1,7 +1,15 @@
  
 
 ##Short description:
-toRINEX Android app generates files with GNSS observation and navigation data in RINEX format
+toRINEX Android app generates files with GNSS observation and navigation data in RINEX format like GOOGLELOGGER.APK
+
+Developed by Luis Cancillo (luiscancillo): https://github.com/luiscancillo/toRINEX
+
+I should to try this!
+
+Then Use Rinex processing Java based lib by Giulio Scattolin (gscatto): https://github.com/gscatto/rinex 
+Last update: 2 years ago
+100% Java based
 
 ##Full description:
 The application generates Receiver Independent Exchange (RINEX) format files from Global Navigation Satellite Systems (GNSS) raw data acquired from the smartphone GPS / GNSS own receiver.
