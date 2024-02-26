@@ -17,8 +17,8 @@ public class LongLatLocation {
         longitude = lon;
     }
 
-    public void print(LongLatLocation location){
-        Log.d("TAG", "print  -  lon: " + location.longitude + ";  lat: " + location.latitude );
+    public void print(){
+        Log.d("TAG", "print  -  lon: " + this.longitude + ";  lat: " + this.latitude);
     }
 
 }

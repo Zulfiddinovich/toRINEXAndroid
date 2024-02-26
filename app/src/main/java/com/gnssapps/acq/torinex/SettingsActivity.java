@@ -25,6 +25,8 @@ import androidx.appcompat.app.ActionBar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.example.rtklib.LongLatLocation;
+
 import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
